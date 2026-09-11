@@ -56,6 +56,36 @@ export const GENERIC: StrategyContent = {
       'Si vas perdiendo el fight, dropá un building defensivo (tower/krepost/castle) y restablecé eco.',
     ],
   },
+  timings: {
+    dark: [
+      '**6** ovejas → **4** madera → jabalí → bayas → 2º jabalí.',
+      'Click Feudal ~**21–22** pop (1k: no hace falta 19–20). **TC idle = 0**.',
+      'Casas: no te quedes housing — siempre **+2–3** casas de holgura.',
+    ],
+    feudalEarly: [
+      'Al llegar: Loom si hay amenaza; 1er building militar + Blacksmith si vas a pelear.',
+      'Farms: empezá transición — **~6–8** farms pronto; no dejes solo bayas.',
+      'Presión típica: **6–10** unidades + eco, no deathball feudal.',
+    ],
+    feudalMid: [
+      'Wall parcial / spears vs scouts / skirms vs archers según scout.',
+      '2º building militar si hay pelea. Mantené **1 scout** vivo.',
+      'Wood bank para Castle: apuntá **~200–275** wood + food para click limpio.',
+    ],
+    castleClick: [
+      'Click Castle cuando farms + wood bank estén listos (no “porque sí”).',
+      'Antes del click: decidí 2º TC vs army — en 1k **2º TC** casi siempre.',
+    ],
+    castleMid: [
+      'A mitad de Castillos: **2 TC** + **~2–3** upgrades clave + ejército usable (no 5 unidades).',
+      'Producción continua desde **2** buildings militares. Raids > solo fight frontal.',
+      'Siege workshop si hay walls/towers.',
+    ],
+    late: [
+      '3er TC o Imp según mapa. Upgrades de unidad principal + armor.',
+      'Si vas perdiendo el fight: building defensivo + restablecé eco antes de re-engage.',
+    ],
+  },
   erroresComunes: [
     'TC idle y casas olvidadas (housing).',
     'Ir a Castle sin farms / sin wood bank.',
@@ -259,6 +289,36 @@ export const BULGARIAN_BASE: StrategyContent = {
       'Krepost forward en un gold/stone del rival = enorme en 1k (muchos no saben responder).',
       'Stirrups cuando vayas heavy cav/hussar. Konniks: asegurate de tener gold y armor upgrades (monté y a pie).',
       'Siege: ram + knights/konniks vs base wallada.',
+    ],
+  },
+  timings: {
+    dark: [
+      '**6** ovejas → **4** wood → jabalí → bayas → 2º jabalí → farms.',
+      'Click Feudal **20–21** pop + Barracks al click (o justo antes). **No** mining camp de oro solo por MAA.',
+      'Para **3** milicias: **1** vil a oro a distancia (~**10** gold) alcanza (upgrade MAA gratis en Feudal).',
+    ],
+    feudalEarly: [
+      'Al llegar Feudal: upgrade MAA gratis → mandá **3** MAA al rival.',
+      'Blacksmith barato: armor/attack de infantería pronto.',
+      'Farms subiendo ya; follow-up: Stable (scouts) o Archery (skirms) según scout.',
+    ],
+    feudalMid: [
+      'Tras MAA: **2–3** spears si ves scouts; **skirms** si ves arqueros; wall parcial detrás.',
+      'No overcommit: presión + eco. Si wallan perfecto → skirms + prepará Castle.',
+      'Wood/food bank para Castle; seguí farms (**~10–12** hacia el click).',
+    ],
+    castleClick: [
+      'Click Castle limpio con farms. Prioridad post-click: **2º TC** + **1–2** Stable(s).',
+      'Piedra en mente para **Krepost** (más barato que Castle) en gold/forward.',
+    ],
+    castleMid: [
+      'A mitad de Castillos: **2 TC** + **~3** upgrades (armor/attack cab o inf + ballistics si hay archers) + **8–12** knights/konniks en producción.',
+      'Krepost en gold/stone del rival = enorme en 1k. Siege (ram) si hay walls.',
+      'Stirrups cuando vayas heavy cav/hussar. Konniks solo con oro + upgrades.',
+    ],
+    late: [
+      '3er TC o Imp. Hussar (Stirrups) raids a eco + rams vs base.',
+      'No pelees knights enemigos sin spears/halbs. Mantené producción dual (raid + push).',
     ],
   },
   erroresComunes: [
@@ -529,6 +589,13 @@ export function mergeStrategy(
       for (const key of Object.keys(base.adaptaciones) as (keyof StrategyContent['adaptaciones'])[]) {
         const v = p.adaptaciones[key];
         if (v?.length) base.adaptaciones[key] = v;
+      }
+    }
+    if (p.timings) {
+      base.timings = { ...(base.timings ?? {}), ...p.timings };
+      for (const key of Object.keys(p.timings) as (keyof NonNullable<StrategyContent['timings']>)[]) {
+        const v = p.timings[key];
+        if (v?.length) base.timings![key] = v;
       }
     }
   }

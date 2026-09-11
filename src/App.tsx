@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Clock, ExternalLink, RotateCcw, Sparkles } from 'lucide-react';
+import { ChevronDown, Clock, ExternalLink, Pencil, RotateCcw, Sparkles } from 'lucide-react';
 import { Combobox } from './components/Combobox';
 import { StrategyPanels } from './components/StrategyPanels';
 import { CIVS, CIV_BY_ID, DEFAULT_MY_CIV } from './data/civs';
 import { MAPS, MAP_BY_ID, MAP_TAG_LABELS } from './data/maps';
+import { META } from './data/meta';
 import { resolveStrategy } from './lib/resolveStrategy';
 import { loadState, pushRecent, saveState } from './lib/storage';
 
@@ -13,6 +14,8 @@ function App() {
   const [oppCivId, setOppCivId] = useState(initial.oppCivId);
   const [mapId, setMapId] = useState(initial.mapId);
   const [recents, setRecents] = useState(initial.recents);
+  /** Mobile: after matchup ready, selectors collapse into a compact bar unless expanded. */
+  const [selectorsExpanded, setSelectorsExpanded] = useState(false);
 
   const civItems = useMemo(
     () =>
@@ -61,17 +64,34 @@ function App() {
     });
   }, [myCivId, oppCivId, mapId]);
 
+  // When matchup becomes ready, collapse selectors on mobile so content is not covered.
+  useEffect(() => {
+    if (ready) setSelectorsExpanded(false);
+  }, [ready, myCivId, oppCivId, mapId]);
+
   function loadRecent(r: { myCivId: string; oppCivId: string; mapId: string }) {
     setMyCivId(r.myCivId);
     setOppCivId(r.oppCivId);
     setMapId(r.mapId);
+    setSelectorsExpanded(false);
   }
 
   function reset() {
     setMyCivId(DEFAULT_MY_CIV);
     setOppCivId('');
     setMapId('');
+    setSelectorsExpanded(true);
   }
+
+  const compactLabel =
+    ready && myCiv && oppCiv && map
+      ? `${myCiv.nameEs} vs ${oppCiv.nameEs} · ${map.nameEs}`
+      : null;
+
+  /** On mobile with a ready matchup and not editing: show compact bar only. */
+  const showCompactBar = ready && !selectorsExpanded;
+  /** Full selectors: always on desktop; on mobile when not ready or expanded. */
+  const showFullSelectors = !ready || selectorsExpanded;
 
   return (
     <div className="min-h-screen min-h-dvh bg-slate-950 text-slate-100">
@@ -116,28 +136,71 @@ function App() {
           </span>
         </div>
 
-        <section className="sticky top-0 z-40 mb-8 grid gap-4 rounded-xl border border-slate-700 bg-slate-900/95 p-4 shadow-xl backdrop-blur-md sm:static sm:bg-slate-900/70 sm:backdrop-blur-none sm:grid-cols-3">
-          <Combobox
-            label="Mi civ"
-            items={civItems}
-            value={myCivId}
-            onChange={setMyCivId}
-            placeholder="Buscar mi civilización…"
-          />
-          <Combobox
-            label="Rival"
-            items={civItems}
-            value={oppCivId}
-            onChange={setOppCivId}
-            placeholder="Buscar civ rival…"
-          />
-          <Combobox
-            label="Mapa"
-            items={mapItems}
-            value={mapId}
-            onChange={setMapId}
-            placeholder="Buscar mapa…"
-          />
+        {/* Sticky matchup bar — compact on mobile when ready so it never covers strategy text */}
+        <section className="sticky top-0 z-40 mb-8">
+          {/* Compact bar: mobile only when matchup ready and collapsed */}
+          {showCompactBar && compactLabel && (
+            <button
+              type="button"
+              onClick={() => setSelectorsExpanded(true)}
+              className="flex w-full min-h-11 items-center justify-between gap-3 rounded-xl border border-amber-500/40 bg-slate-900/95 px-3 py-2.5 text-left shadow-xl backdrop-blur-md touch-manipulation sm:hidden"
+              aria-expanded={false}
+              aria-label="Editar matchup"
+            >
+              <span className="min-w-0 truncate text-sm font-semibold text-amber-100">
+                {compactLabel}
+              </span>
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-slate-800 px-2 py-1 text-xs text-slate-300">
+                <Pencil className="h-3.5 w-3.5" />
+                Editar
+              </span>
+            </button>
+          )}
+
+          {/* Full selectors: always visible on sm+; on mobile when picking or editing */}
+          <div
+            className={`${
+              showFullSelectors ? 'grid' : 'hidden'
+            } gap-4 rounded-xl border border-slate-700 bg-slate-900/95 p-4 shadow-xl backdrop-blur-md sm:!grid sm:static sm:bg-slate-900/70 sm:backdrop-blur-none sm:grid-cols-3`}
+          >
+            {ready && (
+              <div className="flex items-center justify-between gap-2 sm:hidden col-span-full -mt-1 mb-1">
+                <p className="text-xs font-medium text-slate-400">Editá el matchup</p>
+                <button
+                  type="button"
+                  onClick={() => setSelectorsExpanded(false)}
+                  className="inline-flex min-h-9 items-center gap-1 rounded-md border border-slate-600 px-2.5 py-1.5 text-xs text-slate-300 touch-manipulation"
+                >
+                  Listo
+                  <ChevronDown className="h-3.5 w-3.5 rotate-180" />
+                </button>
+              </div>
+            )}
+            <Combobox
+              label="Mi civ"
+              items={civItems}
+              value={myCivId}
+              onChange={setMyCivId}
+              placeholder="Buscar mi civilización…"
+            />
+            <Combobox
+              label="Rival"
+              items={civItems}
+              value={oppCivId}
+              onChange={setOppCivId}
+              placeholder="Buscar civ rival…"
+            />
+            <Combobox
+              label="Mapa"
+              items={mapItems}
+              value={mapId}
+              onChange={setMapId}
+              placeholder="Buscar mapa…"
+            />
+          </div>
+
+          {/* Desktop always shows full selectors above; compact bar is mobile-only.
+              When collapsed on mobile, add a tiny spacer note is unnecessary. */}
         </section>
 
         {recents.length > 0 && (
@@ -181,42 +244,34 @@ function App() {
         )}
 
         <footer className="mt-12 border-t border-slate-800 pt-6 text-sm text-slate-500">
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-200">
+              Patch {META.patchId}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-600 bg-slate-900 px-3 py-1 text-xs text-slate-400">
+              Revisado {META.lastReviewed}
+            </span>
+          </div>
+          <p className="mb-2 text-xs text-slate-500">{META.notes}</p>
           <p className="mb-2 font-semibold text-slate-400">Fuentes y datos</p>
           <ul className="flex flex-wrap gap-x-2 gap-y-2">
-            <li>
-              <a
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2.5 text-amber-500/90 touch-manipulation hover:bg-slate-800 hover:text-amber-400"
-                href="https://aoestats.io"
-                target="_blank"
-                rel="noreferrer"
-              >
-                aoestats.io <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </li>
-            <li>
-              <a
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2.5 text-amber-500/90 touch-manipulation hover:bg-slate-800 hover:text-amber-400"
-                href="https://www.aoe2insights.com"
-                target="_blank"
-                rel="noreferrer"
-              >
-                aoe2insights <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </li>
-            <li>
-              <a
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2.5 text-amber-500/90 touch-manipulation hover:bg-slate-800 hover:text-amber-400"
-                href="https://www.ageofempires.com/news/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Noticias oficiales AoE <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </li>
+            {META.sources.map((s) => (
+              <li key={s.url}>
+                <a
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2.5 text-amber-500/90 touch-manipulation hover:bg-slate-800 hover:text-amber-400"
+                  href={s.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {s.label} <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </li>
+            ))}
           </ul>
           <p className="mt-4 text-xs text-slate-600">
             App 100% local · {CIVS.length} civs · {MAPS.length} mapas · Coaching cualitativo para
-            ranked RM 1v1 · Sept 2026
+            ranked RM 1v1 · Actualizá <code className="text-slate-500">src/data/meta.ts</code> tras
+            cada patch
           </p>
         </footer>
       </div>

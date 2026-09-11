@@ -30,6 +30,16 @@ export interface RankedMap {
   inReferencePool?: boolean;
 }
 
+/** Phase timing checkpoints for live-game glance (Elo ~1000–1100). */
+export interface TimingCheckpoints {
+  dark?: string[];
+  feudalEarly?: string[];
+  feudalMid?: string[];
+  castleClick?: string[];
+  castleMid?: string[];
+  late?: string[];
+}
+
 export interface StrategyContent {
   apertura: string[];
   planMapa: string[];
@@ -47,4 +57,6 @@ export interface StrategyContent {
     castle: string[];
   };
   erroresComunes: string[];
+  /** Optional live-game timing checkpoints by phase */
+  timings?: TimingCheckpoints;
 }

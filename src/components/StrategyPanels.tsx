@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { StrategyContent } from '../data/types';
+import type { StrategyContent, TimingCheckpoints } from '../data/types';
 import {
   Crosshair,
   Map,
@@ -7,6 +7,7 @@ import {
   RefreshCw,
   ListChecks,
   AlertTriangle,
+  Timer,
 } from 'lucide-react';
 
 interface Props {
@@ -24,7 +25,7 @@ function Panel({
   icon: ReactNode;
   title: string;
   children: ReactNode;
-  accent?: 'amber' | 'sky' | 'rose' | 'emerald' | 'violet' | 'orange';
+  accent?: 'amber' | 'sky' | 'rose' | 'emerald' | 'violet' | 'orange' | 'cyan';
 }) {
   const accents = {
     amber: 'border-amber-500/40 from-amber-500/10',
@@ -33,6 +34,7 @@ function Panel({
     emerald: 'border-emerald-500/40 from-emerald-500/10',
     violet: 'border-violet-500/40 from-violet-500/10',
     orange: 'border-orange-500/40 from-orange-500/10',
+    cyan: 'border-cyan-500/40 from-cyan-500/10',
   };
   return (
     <section
@@ -47,16 +49,65 @@ function Panel({
   );
 }
 
-function Bullets({ items }: { items: string[] }) {
+/** Render inline **bold** markers for timing numbers / emphasis. */
+function RichText({ text }: { text: string }) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+          return (
+            <strong key={i} className="font-bold text-amber-200">
+              {part.slice(2, -2)}
+            </strong>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </>
+  );
+}
+
+function Bullets({ items, rich = false }: { items: string[]; rich?: boolean }) {
   return (
     <ul className="space-y-2">
       {items.map((t, i) => (
         <li key={i} className="flex gap-2 text-sm leading-relaxed break-words text-slate-200">
           <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
-          <span className="min-w-0">{t}</span>
+          <span className="min-w-0">{rich ? <RichText text={t} /> : t}</span>
         </li>
       ))}
     </ul>
+  );
+}
+
+const TIMING_PHASES: Array<{ key: keyof TimingCheckpoints; label: string }> = [
+  { key: 'dark', label: 'Dark Age' },
+  { key: 'feudalEarly', label: 'Feudal temprano' },
+  { key: 'feudalMid', label: 'Feudal medio' },
+  { key: 'castleClick', label: 'Click a Castillos' },
+  { key: 'castleMid', label: 'Mitad de Castillos' },
+  { key: 'late', label: 'Late / Imp' },
+];
+
+function TimingsPanel({ timings }: { timings: TimingCheckpoints }) {
+  const phases = TIMING_PHASES.filter((p) => (timings[p.key]?.length ?? 0) > 0);
+  if (phases.length === 0) return null;
+
+  return (
+    <Panel icon={<Timer className="h-5 w-5" />} title="Checkpoints de timing" accent="cyan">
+      <p className="mb-3 text-xs text-slate-400">
+        Mirada rápida en partida (Elo ~1000–1100). Números en negrita = anclas concretas.
+      </p>
+      <div className="space-y-3">
+        {phases.map(({ key, label }) => (
+          <div key={key} className="rounded-lg border border-cyan-500/20 bg-slate-950/40 px-3 py-2">
+            <h3 className="mb-1.5 text-sm font-semibold text-cyan-300">{label}</h3>
+            <Bullets items={timings[key]!} rich />
+          </div>
+        ))}
+      </div>
+    </Panel>
   );
 }
 
@@ -81,6 +132,8 @@ export function StrategyPanels({ content, resolutionPath, title }: Props) {
           </span>
         </p>
       </div>
+
+      {content.timings && <TimingsPanel timings={content.timings} />}
 
       <div className="grid min-w-0 gap-4 lg:grid-cols-2">
         <Panel icon={<Swords className="h-5 w-5" />} title="1. Apertura / Build order" accent="amber">
