@@ -2,21 +2,23 @@ import type { RankedMap } from './types';
 
 /**
  * Mapas frecuentes en rotación ranked 1v1.
- * Referencia pool Jun (histórico RMR): Acropolis, Arabia, Arena, Four Lakes, Gold Rush, Hideout, Islands.
+ * Pool 1v1 observado desde ~15 oct 2026 (aoe2ladder.com, partidas ranked 1v1): Arabia, Arena, Arabian Desert, Nomad, Socotra.
+ * (No se encontró el post oficial RMR de oct 2026; último oficial hallado: RMR 29 jun 2026.)
  * El pool rota ~cada 2 semanas — editá este archivo para actualizar.
  */
 export const MAPS: RankedMap[] = [
-  // Referencia Jun RMR
-  { id: 'acropolis', name: 'Acropolis', nameEs: 'Acrópolis', tag: 'open', keywords: ['acropolis', 'acropolis'], inReferencePool: true },
+  // Pool observado oct 2026
+  { id: 'arabian_desert', name: 'Arabian Desert', nameEs: 'Desierto Arábigo', tag: 'open', keywords: ['arabian desert', 'desierto', 'desierto arabigo'], inReferencePool: true },
+  { id: 'acropolis', name: 'Acropolis', nameEs: 'Acrópolis', tag: 'open', keywords: ['acropolis', 'acropolis'] },
   { id: 'arabia', name: 'Arabia', nameEs: 'Arabia', tag: 'open', keywords: ['arabia', 'arab'], inReferencePool: true },
   { id: 'arena', name: 'Arena', nameEs: 'Arena', tag: 'closed', keywords: ['arena'], inReferencePool: true },
-  { id: 'four_lakes', name: 'Four Lakes', nameEs: 'Cuatro Lagos', tag: 'hybrid', keywords: ['four lakes', 'cuatro lagos', '4 lakes'], inReferencePool: true },
-  { id: 'gold_rush', name: 'Gold Rush', nameEs: 'Fiebre del Oro', tag: 'open', keywords: ['gold rush', 'fiebre'], inReferencePool: true },
-  { id: 'hideout', name: 'Hideout', nameEs: 'Escondite', tag: 'closed', keywords: ['hideout', 'escondite'], inReferencePool: true },
-  { id: 'islands', name: 'Islands', nameEs: 'Islas', tag: 'water', keywords: ['islands', 'islas'], inReferencePool: true },
+  { id: 'four_lakes', name: 'Four Lakes', nameEs: 'Cuatro Lagos', tag: 'hybrid', keywords: ['four lakes', 'cuatro lagos', '4 lakes'] },
+  { id: 'gold_rush', name: 'Gold Rush', nameEs: 'Fiebre del Oro', tag: 'open', keywords: ['gold rush', 'fiebre'] },
+  { id: 'hideout', name: 'Hideout', nameEs: 'Escondite', tag: 'closed', keywords: ['hideout', 'escondite'] },
+  { id: 'islands', name: 'Islands', nameEs: 'Islas', tag: 'water', keywords: ['islands', 'islas'] },
   // Rotación frecuente
   { id: 'african_clearing', name: 'African Clearing', nameEs: 'Claro Africano', tag: 'open', keywords: ['african', 'claro africano'] },
-  { id: 'nomad', name: 'Nomad', nameEs: 'Nómada', tag: 'nomad', keywords: ['nomad', 'nomada'] },
+  { id: 'nomad', name: 'Nomad', nameEs: 'Nómada', tag: 'nomad', keywords: ['nomad', 'nomada'], inReferencePool: true },
   { id: 'migration', name: 'Migration', nameEs: 'Migración', tag: 'water', keywords: ['migration', 'migracion'] },
   { id: 'megarandom', name: 'MegaRandom', nameEs: 'MegaAleatorio', tag: 'hybrid', keywords: ['megarandom', 'mega', 'aleatorio'] },
   { id: 'highland', name: 'Highland', nameEs: 'Tierras Altas', tag: 'hybrid', keywords: ['highland', 'tierras altas'] },
@@ -27,7 +29,7 @@ export const MAPS: RankedMap[] = [
   { id: 'ghost_lake', name: 'Ghost Lake', nameEs: 'Lago Fantasma', tag: 'open', keywords: ['ghost lake', 'lago fantasma'] },
   { id: 'valley', name: 'Valley', nameEs: 'Valle', tag: 'open', keywords: ['valley', 'valle'] },
   { id: 'scandinavia', name: 'Scandinavia', nameEs: 'Escandinavia', tag: 'hybrid', keywords: ['scandinavia', 'escandinavia'] },
-  { id: 'socotra', name: 'Socotra', nameEs: 'Socotra', tag: 'open', keywords: ['socotra'] },
+  { id: 'socotra', name: 'Socotra', nameEs: 'Socotra', tag: 'open', keywords: ['socotra'], inReferencePool: true },
   { id: 'haboob', name: 'Haboob', nameEs: 'Haboob', tag: 'open', keywords: ['haboob'] },
   { id: 'glade', name: 'Glade', nameEs: 'Claro', tag: 'open', keywords: ['glade', 'claro'] },
   { id: 'graveyards', name: 'Graveyards', nameEs: 'Cementerios', tag: 'hybrid', keywords: ['graveyard', 'cementerio'] },

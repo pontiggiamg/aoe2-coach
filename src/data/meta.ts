@@ -9,11 +9,13 @@ export interface PatchMeta {
 }
 
 export const META: PatchMeta = {
-  patchId: 'Update 153015 (ref. Sep 2026)',
-  lastReviewed: '2026-09-11',
+  patchId: 'Update 185872 (22 sep 2026, The Viking Sagas)',
+  lastReviewed: '2026-10-22',
   notes:
-    'Coaching cualitativo Elo 1000–1100. Revisar timings y tip list tras cada balance patch; no inventar win rates.',
+    'Update 185872: Ballestero montado reemplaza al arquero a caballo en 12 civs europeas (+Cranequins), Varangian Guard, nuevas civs Daneses/Sajones/Varangios, Onager 55 atk/8 PA, rework Stand Ground Patrol. Búlgaros sin cambios directos. Sin parches de balance posteriores al 22/10. Pool 1v1 observado: Arabia, Arena, Arabian Desert, Nomad, Socotra.',
   sources: [
+    { label: 'Update 185872', url: 'https://www.ageofempires.com/news/age-of-empires-ii-definitive-edition-update-185872/' },
+    { label: 'aoe2ladder mapas', url: 'https://aoe2ladder.com/recaps/maps' },
     { label: 'aoestats.io', url: 'https://aoestats.io' },
     { label: 'aoe2insights', url: 'https://www.aoe2insights.com' },
     { label: 'Noticias oficiales AoE', url: 'https://www.ageofempires.com/news/' },
